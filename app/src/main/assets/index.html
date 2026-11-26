@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشاط ۹۰</title>
+<style>
+body{font-family:Tahoma,sans-serif;background:#f2f4f7;margin:0;padding:16px;color:#222}
+h2{text-align:center;color:#176b45}
+.card{background:white;padding:14px;margin:12px 0;border-radius:12px}
+input{width:90%;padding:10px;margin:5px;border:1px solid #ccc;border-radius:7px}
+button{padding:10px 16px;border:0;border-radius:8px;background:#176b45;color:white;margin:5px}
+.game{border-bottom:1px solid #ddd;padding:12px 0}
+.choice{display:flex;gap:12px;align-items:center}
+#result{white-space:pre-wrap;direction:rtl}
+</style>
+</head>
+<body>
+<h2>نشاط ۹۰</h2>
+<div class="card">
+<label>تعداد مسابقات:</label>
+<select id="count" onchange="drawGames()">
+<option>13</option><option>14</option><option selected>15</option>
+<option>16</option><option>17</option><option>18</option>
+<option>19</option><option>20</option>
+</select>
+<div id="games"></div>
+<button onclick="generate()">تولید فرم‌ها</button>
+</div>
+<div class="card">
+<label>تعداد فرم‌ها (حداکثر ۳۰۰):</label>
+<input id="forms" type="number" min="1" max="300" value="100">
+<button onclick="generate()">ساخت فرم</button>
+<div id="result"></div>
+</div>
+<script>
+function drawGames(){
+let n=+document.getElementById('count').value;
+let box=document.getElementById('games');box.innerHTML='';
+for(let i=0;i<n;i++){
+box.innerHTML+=`<div class="game">
+<strong>مسابقه ${i+1}</strong><br>
+<input placeholder="نام میزبان" id="h${i}">
+<input placeholder="نام مهمان" id="a${i}">
+<div class="choice">
+<label><input type="checkbox" id="c1_${i}" checked> ۱</label>
+<label><input type="checkbox" id="cx_${i}" checked> X</label>
+<label><input type="checkbox" id="c2_${i}" checked> ۲</label>
+<label><input type="checkbox" id="e${i}" checked> فعال</label>
+</div></div>`;
+}}
+function generate(){
+let n=+document.getElementById('count').value;
+let limit=Math.min(300,Math.max(1,+document.getElementById('forms').value||1));
+let games=[];
+for(let i=0;i<n;i++){
+if(!document.getElementById('e'+i).checked)continue;
+let c=[];
+if(document.getElementById('c1_'+i).checked)c.push('۱');
+if(document.getElementById('cx_'+i).checked)c.push('X');
+if(document.getElementById('c2_'+i).checked)c.push('۲');
+if(!c.length){alert('برای مسابقه '+(i+1)+' حداقل یک تیک انتخاب کن');return}
+games.push(c);
+}
+let rows=[[]];
+for(let choices of games){
+let next=[];
+for(let row of rows)for(let c of choices){
+if(next.length>=limit)break;
+next.push([...row,c]);
+}
+rows=next;
+}
+document.getElementById('result').textContent=
+'تعداد فرم ساخته‌شده: '+rows.length+'\n\n'+
+rows.map((r,i)=>(i+1)+') '+r.join(' - ')).join('\n');
+}
+drawGames();
+</script>
+</body>
+  </html>
