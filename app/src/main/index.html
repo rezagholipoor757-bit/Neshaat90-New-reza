@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123d32">
+<title>نشاط ۹۰</title>
+<style>
+:root{--green:#176b45;--dark:#123d32;--mint:#e9f5ef;--bg:#f3f6f5;--line:#dce5e0;--red:#b42318;--gold:#8a5a00}
+*{box-sizing:border-box}body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);margin:0;color:#17221d;padding-bottom:35px}
+header{background:linear-gradient(135deg,var(--dark),#23865b);color:white;padding:22px 16px 18px;text-align:center}
+header h1{margin:0 0 6px;font-size:25px}header p{margin:0;font-size:12px;opacity:.9}
+nav{display:flex;overflow:auto;gap:7px;padding:10px;background:#fff;position:sticky;top:0;z-index:3;border-bottom:1px solid var(--line)}
+nav button{white-space:nowrap;background:#edf3ef;color:#244b39;padding:10px 13px}
+nav button.active{background:var(--green);color:#fff}
+main{max-width:900px;margin:auto;padding:10px}
+section{display:none}section.active{display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;box-shadow:0 2px 8px #173b2910}
+h2{font-size:18px;color:var(--dark);margin:3px 0 14px}h3{font-size:15px;margin:12px 0 8px;color:#244b39}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.field{flex:1;min-width:125px}
+label{font-size:12px;color:#43534a;display:block;margin:6px 0}
+input,select{font:inherit;font-size:14px;padding:10px;border:1px solid #cbd7d0;border-radius:8px;background:#fff;color:#17221d;max-width:100%;width:100%}
+input[type=checkbox],input[type=radio]{width:auto;accent-color:var(--green);transform:scale(1.1)}
+button{border:0;border-radius:9px;background:var(--green);color:#fff;font:inherit;font-size:13px;padding:10px 13px;margin:3px;cursor:pointer}
+button.secondary{background:#e8f0eb;color:#214b36}button.danger{background:#fff0ee;color:var(--red)}button.gold{background:#fff4d9;color:#754c00}
+small,.muted{font-size:11px;color:#68766f;line-height:1.8}.game,.form{border:1px solid var(--line);border-radius:10px;padding:10px;margin:9px 0;background:#fff}
+.gamehead,.formhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.choices{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0}.choices label{display:flex;align-items:center;gap:5px;margin:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat{background:var(--mint);padding:10px;border-radius:9px;text-align:center;font-size:12px}
+.stat b{display:block;font-size:19px;color:var(--dark);margin-top:4px}
+table{border-collapse:collapse;width:100%;font-size:12px;margin-top:8px}th,td{border:1px solid var(--line);padding:6px;text-align:center}th{background:#edf5f0}
+table input{min-width:75px;padding:7px;font-size:12px}
+.picks{display:flex;gap:7px;flex-wrap:wrap}.pick{border:1px solid #aabbb0;border-radius:7px;padding:6px 9px;background:#fff;color:#345}
+.pick.on{background:var(--mint);border-color:var(--green);color:var(--dark);font-weight:bold}
+.notice{background:#fff7e6;border-right:4px solid #d69b28;padding:10px;border-radius:7px;font-size:12px;line-height:1.9}
+.good{color:var(--green)}.bad{color:var(--red)}.hidden{display:none!important}
+@media(max-width:520px){main{padding:7px}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{padding:11px}.stat b{font-size:16px}}
+</style>
+</head>
+<body>
+<header><h1>نشاط ۹۰</h1><p>مدیریت مسابقات، ساخت و ویرایش فرم‌ها، قیمت‌گذاری و ارزیابی نتایج</p></header>
+<nav>
+<button class="active" data-tab="matches">مسابقات</button>
+<button data-tab="generator">ساخت فرم</button>
+<button data-tab="formsTab">فرم‌های من</button>
+<button data-tab="prices">قیمت‌گذاری</button>
+<button data-tab="results">نتایج</button>
+</nav>
+<main>
+<section id="matches" class="active">
+<div class="card">
+<h2>مدیریت مسابقات</h2>
+<div class="row"><div class="field"><label>تعداد مسابقات</label><select id="gameCount" onchange="resizeGames()"><option>13</option><option>14</option><option selected>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option></select></div>
+<div class="field"><label>بارگذاری مسابقات (CSV یا JSON)</label><input type="file" id="fixtureFile" accept=".csv,.json"></div></div>
+<div class="row"><button onclick="importFixtures()">بارگذاری فایل مسابقات</button><button class="secondary" onclick="downloadFixtures()">خروجی مسابقات</button><button class="secondary" onclick="clearGames()">پاک‌کردن اسامی</button></div>
+<p class="muted">CSV: میزبان,مهمان. در JSON نیز آرایه‌ای از {"home":"...","away":"..."} پذیرفته می‌شود.</p>
+<div id="games"></div>
+</div>
+</section>
+
+<section id="generator">
+<div class="card">
+<h2>پیشنهاد و تولید فرم‌ها</h2>
+<div class="notice">برای هر فرم مشخص کن چند مسابقه تک‌تیک، چند مسابقه دوتیک و چند مسابقه سه‌تیک داشته باشد. مجموع این سه عدد باید برابر تعداد مسابقات فعال باشد. برنامه فرم‌های متفاوت می‌سازد و فرم‌ها بعداً قابل ویرایش‌اند.</div>
+<div class="grid2">
+<div><label>تعداد فرم پیشنهادی</label><input id="formCount" type="number" min="1" max="300" value="20"></div>
+<div><label>تعداد تک‌تیک در هر فرم</label><input id="singleN" type="number" min="0" value="10"></div>
+<div><label>تعداد دوتیک در هر فرم</label><input id="doubleN" type="number" min="0" value="4"></div>
+<div><label>تعداد سه‌تیک در هر فرم</label><input id="tripleN" type="number" min="0" value="1"></div>
+</div>
+<div class="row"><button onclick="generateForms()">پیشنهاد فرم‌ها</button><button class="secondary" onclick="saveAll()">ذخیره فرم‌ها</button></div>
+<p class="muted" id="mixHint"></p>
+</div>
+</section>
+
+<section id="formsTab">
+<div class="card"><h2>فرم‌های ساخته‌شده</h2>
+<div class="grid3"><div class="stat">تعداد فرم‌ها<b id="formTotal">۰</b></div><div class="stat">هزینه کل<b id="grandTotal">۰</b></div><div class="stat">فرم‌های معتبر<b id="validTotal">۰</b></div></div>
+<div id="formsList"></div>
+</div>
+</section>
+
+<section id="prices">
+<div class="card"><h2>تنظیمات قیمت‌گذاری</h2>
+<div class="notice">مبلغ هر فرم بر اساس تعداد تیک محاسبه می‌شود: قیمت پایهٔ یک تیک + مبلغ افزوده برای هر تیک اضافه. ۱۸ سطح اولیه قابل ویرایش است و می‌توانی سطح جدید اضافه کنی. ارقام اولیه صفر هستند تا قیمت اشتباه به برنامه تحمیل نشود.</div>
+<div class="grid2">
+<div><label>حداقل مبلغ هر فرم (تومان)</label><input id="minForm" type="number" min="0" value="0" onchange="renderForms()"></div>
+<div><label>حداکثر مبلغ هر فرم (تومان)</label><input id="maxForm" type="number" min="0" value="0" onchange="renderForms()"></div>
+<div><label>حداقل هزینه کل (تومان)</label><input id="minTotal" type="number" min="0" value="0" onchange="renderForms()"></div>
+<div><label>حداکثر هزینه کل (تومان)</label><input id="maxTotal" type="number" min="0" value="0" onchange="renderForms()"></div>
+<div><label>قیمت پایه یک تیک (تومان)</label><input id="basePrice" type="number" min="0" value="0" onchange="renderForms()"></div>
+<div><label>افزایش مبلغ به‌ازای هر تیک اضافه (تومان)</label><input id="tickAdd" type="number" min="0" value="0" onchange="renderForms()"></div>
+</div>
+<h3>جدول ۱۸ سطح و سطوح بیشتر</h3>
+<div class="row"><button onclick="addLevel()">افزودن سطح</button><button class="secondary" onclick="resetLevels()">بازسازی ۱۸ سطح خالی</button></div>
+<div style="overflow:auto"><table><thead><tr><th>سطح</th><th>نام سطح</th><th>قیمت پایه یک تیک</th><th>افزایش هر تیک</th><th>حذف</th></tr></thead><tbody id="levels"></tbody></table></div>
+<p class="muted">هر سطح، برنامهٔ قیمت مستقل دارد. انتخاب سطح فعال در بالای جدول انجام می‌شود.</p>
+<label>سطح قیمت فعال</label><select id="activeLevel" onchange="selectLevel()"></select>
+</div>
+</section>
+
+<section id="results">
+<div class="card"><h2>ثبت و بررسی نتایج مسابقات</h2>
+<div class="notice">در این نسخه ثبت دستی نتیجه و بارگذاری فایل نتایج فعال است. اتصال خودکار به نتایج زنده نیازمند انتخاب سرویس‌دهندهٔ نتایج و API معتبر است؛ آدرس ساختگی یا نتیجهٔ حدسی استفاده نمی‌کنیم.</div>
+<div class="row"><div class="field"><label>بارگذاری نتایج CSV یا JSON</label><input type="file" id="resultFile" accept=".csv,.json"></div><button onclick="importResults()">بارگذاری نتایج</button></div>
+<div id="resultsList"></div>
+<button onclick="evaluateForms()">ارزیابی همه فرم‌ها</button><div id="evaluation"></div>
+</div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id), digits=n=>Number(n||0).toLocaleString('fa-IR');
+let games=[], forms=[], levels=[], activeLevel=0;
+function defaultGames(n){return Array.from({length:n},(_,i)=>({home:'',away:'',enabled:true,allowed:['1','X','2'],result:''}));}
+function init(){
+ games=defaultGames(15); resetLevels(false); loadState(); renderGames(); renderLevels(); renderForms(); renderResults();
+ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('main section').forEach(s=>s.classList.toggle('active',s.id===b.dataset.tab));});
+}
+function resizeGames(){let n=+$('gameCount').value;games=Array.from({length:n},(_,i)=>games[i]||{home:'',away:'',enabled:true,allowed:['1','X','2'],result:''});renderGames();}
+function renderGames(){$('games').innerHTML=games.map((g,i)=>`<div class="game"><div class="gamehead"><b>مسابقه ${i+1}</b><label><input type="checkbox" ${g.enabled?'checked':''} onchange="games[${i}].enabled=this.checked"> فعال</label></div><div class="grid2"><input placeholder="نام میزبان" value="${esc(g.home)}" onchange="games[${i}].home=this.value"><input placeholder="نام مهمان" value="${esc(g.away)}" onchange="games[${i}].away=this.value"></div><div class="choices">${[['1','۱'],['X','X'],['2','۲']].map(([v,t])=>`<label><input type="checkbox" ${g.allowed.includes(v)?'checked':''} onchange="toggleAllowed(${i},'${v}',this.checked)"> ${t}</label>`).join('')}</div></div>`).join('');}
+function toggleAllowed(i,v,on){games[i].allowed=on?[...new Set([...games[i].allowed,v])]:games[i].allowed.filter(x=>x!==v);if(!games[i].allowed.length){games[i].allowed=[v];alert('حداقل یک انتخاب باید برای هر مسابقه باقی بماند.');renderGames();}}
+function clearGames(){games.forEach(g=>{g.home='';g.away='';});renderGames();}
+function importFixtures(){let f=$('fixtureFile').files[0];if(!f)return alert('ابتدا فایل مسابقات را انتخاب کن.');let r=new FileReader();r.onload=()=>{try{let data=parseRows(r.result);data.forEach((x,i)=>{if(i<20)games[i]={...(games[i]||{}),home:x.home||x.host||'',away:x.away||x.guest||'',enabled:true,allowed:['1','X','2'],result:''};});$('gameCount').value=Math.max(13,Math.min(20,data.length));games=games.slice(0,+$('gameCount').value);while(games.length<+$('gameCount').value)games.push({home:'',away:'',enabled:true,allowed:['1','X','2'],result:''});renderGames();saveState();alert('مسابقات بارگذاری شد.');}catch(e){alert('ساختار فایل قابل خواندن نیست.');}};r.readAsText(f,'UTF-8');}
+function parseRows(t){let x=JSON.parse(t);if(Array.isArray(x))return x;} 
+function downloadFixtures(){download('neshaat90-fixtures.json',JSON.stringify(games,null,2),'application/json');}
+function resetLevels(save=true){levels=Array.from({length:18},(_,i)=>({name:'سطح '+(i+1),base:0,add:0}));activeLevel=0;if(save)renderLevels();}
+function renderLevels(){$('levels').innerHTML=levels.map((l,i)=>`<tr><td>${i+1}</td><td><input value="${esc(l.name)}" onchange="levels[${i}].name=this.value;updateLevelSelect()"></td><td><input type="number" min="0" value="${l.base}" onchange="levels[${i}].base=+this.value;syncPriceInputs();renderForms()"></td><td><input type="number" min="0" value="${l.add}" onchange="levels[${i}].add=+this.value;syncPriceInputs();renderForms()"></td><td><button class="danger" onclick="removeLevel(${i})">حذف</button></td></tr>`).join('');updateLevelSelect();syncPriceInputs();}
+function updateLevelSelect(){$('activeLevel').innerHTML=levels.map((l,i)=>`<option value="${i}" ${i===activeLevel?'selected':''}>${esc(l.name)}</option>`).join('');}
+function syncPriceInputs(){let l=levels[activeLevel]||{base:0,add:0};$('basePrice').value=l.base;$('tickAdd').value=l.add;}
+function selectLevel(){activeLevel=+$('activeLevel').value;syncPriceInputs();}
+function addLevel(){levels.push({name:'سطح '+(levels.length+1),base:0,add:0});renderLevels();}
+function removeLevel(i){if(levels.length<=1)return alert('حداقل یک سطح لازم است.');levels.splice(i,1);activeLevel=Math.min(activeLevel,levels.length-1);renderLevels();renderForms();}
+function updateActivePrice(key,value){if(!levels[activeLevel])return;levels[activeLevel][key]=Math.max(0,+value||0);renderLevels();renderForms();saveState();}
+function currentPrice(){let l=levels[activeLevel];return l||{base:+$('basePrice').value,add:+$('tickAdd').value};}
+function price(ticks){let p=currentPrice();return Math.max(0,+p.base+(Math.max(1,ticks)-1)*+p.add);}
+function activeGames(){return games.map((g,i)=>({...g,index:i})).filter(g=>g.enabled);}
+function generateForms(){
+ let ag=activeGames(),s=+$('singleN').value,d=+$('doubleN').value,t=+$('tripleN').value,count=Math.min(300,Math.max(1,+$('formCount').value||1));
+ if(s+d+t!==ag.length)return alert('مجموع تک‌تیک، دوتیک و سه‌تیک باید برابر تعداد مسابقات فعال باشد ('+ag.length+').');
+ if(ag.some(g=>!g.allowed.length))return alert('برای همه مسابقات فعال حداقل یک انتخاب تعیین کن.');
+ forms=[];let seen=new Set(),tries=0;
+ while(forms.length<count&&tries<count*100){tries++;let order=[...ag].sort(()=>Math.random()-.5),types=[...Array(s).fill(1),...Array(d).fill(2),...Array(t).fill(3)].sort(()=>Math.random()-.5),picks={};order.forEach((g,j)=>{let k=Math.min(types[j],g.allowed.length),a=[...g.allowed].sort(()=>Math.random()-.5).slice(0,k);picks[g.index]=a;});let key=ag.map(g=>(picks[g.index]||[]).slice().sort().join('')).join('|');if(!seen.has(key)){seen.add(key);forms.push({id:Date.now()+Math.random(),picks});}}
+ if(!forms.length)return alert('با انتخاب‌های فعلی امکان ساخت فرم وجود ندارد.');
+ $('mixHint').textContent=`${digits(forms.length)} فرم پیشنهادی ساخته شد. هر فرم ${s} تک‌تیک، ${d} دوتیک و ${t} سه‌تیک دارد.`;renderForms();saveState();
+}
+function renderForms(){
+ $('formTotal').textContent=digits(forms.length);
+ let minF=+$('minForm').value,maxF=+$('maxForm').value,minT=+$('minTotal').value,maxT=+$('maxTotal').value;
+ let total=forms.reduce((a,f)=>a+formPrice(f),0),valid=forms.filter(f=>{let p=formPrice(f);return (!minF||p>=minF)&&(!maxF||p<=maxF)}).length;
+ $('grandTotal').textContent=digits(total);$('validTotal').textContent=digits(valid);
+ $('formsList').innerHTML=forms.map((f,fi)=>{let ticks=Object.values(f.picks).reduce((a,x)=>a+x.length,0),p=formPrice(f),ok=(!minF||p>=minF)&&(!maxF||p<=maxF);return `<div class="form"><div class="formhead"><b>فرم ${fi+1}</b><span class="${ok?'good':'bad'}">${digits(p)} تومان · ${ticks} تیک</span></div>${activeGames().map(g=>`<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:5px 0;border-top:1px solid #edf0ed"><small>${g.index+1}. ${esc(g.home||'میزبان')} - ${esc(g.away||'مهمان')}</small><div class="picks">${['1','X','2'].map(v=>`<button class="pick ${(f.picks[g.index]||[]).includes(v)?'on':''}" onclick="editPick(${fi},${g.index},'${v}')">${v==='1'?'۱':v==='2'?'۲':'X'}</button>`).join('')}</div></div>`).join('')}<div class="row"><button class="secondary" onclick="duplicateForm(${fi})">کپی</button><button class="danger" onclick="deleteForm(${fi})">حذف</button><button onclick="saveState()">ذخیره تغییرات</button></div></div>`}).join('')||'<p class="muted">هنوز فرمی ساخته نشده است.</p>';
+ if(minT&&total<minT)$('grandTotal').classList.add('bad');else $('grandTotal').classList.remove('bad');
+ if(maxT&&total>maxT)$('grandTotal').classList.add('bad');
+ let budgetNote='';
+ if(minT&&total<minT)budgetNote='هشدار: هزینه کل کمتر از حداقل تعیین‌شده است.';
+ if(maxT&&total>maxT)budgetNote='هشدار: هزینه کل از حداکثر تعیین‌شده بیشتر است.';
+ let old=$('budgetWarning');if(old)old.remove();
+ if(budgetNote){let n=document.createElement('p');n.id='budgetWarning';n.className='notice bad';n.textContent=budgetNote;$('formsList').prepend(n);}
+}
+function formPrice(f){let n=Object.values(f.picks).reduce((a,x)=>a+x.length,0);return price(n);}
+function editPick(fi,gi,v){let a=forms[fi].picks[gi]||[];forms[fi].picks[gi]=a.includes(v)?a.filter(x=>x!==v):[...a,v];if(!forms[fi].picks[gi].length)delete forms[fi].picks[gi];renderForms();saveState();}
+function duplicateForm(i){forms.splice(i+1,0,{id:Date.now()+Math.random(),picks:JSON.parse(JSON.stringify(forms[i].picks))});renderForms();saveState();}
+function deleteForm(i){forms.splice(i,1);renderForms();saveState();}
+function saveAll(){saveState();alert('فرم‌ها در همین گوشی ذخیره شدند.');}
+function renderResults(){$('resultsList').innerHTML=games.map((g,i)=>`<div class="game"><b>${i+1}. ${esc(g.home||'میزبان')} - ${esc(g.away||'مهمان')}</b><label>نتیجه نهایی</label><select onchange="games[${i}].result=this.value;saveState()"><option value="">ثبت نشده</option><option value="1" ${g.result==='1'?'selected':''}>برد میزبان (۱)</option><option value="X" ${g.result==='X'?'selected':''}>مساوی (X)</option><option value="2" ${g.result==='2'?'selected':''}>برد مهمان (۲)</option></select></div>`).join('');}
+function importResults(){let f=$('resultFile').files[0];if(!f)return alert('ابتدا فایل نتایج را انتخاب کن.');let r=new FileReader();r.onload=()=>{try{let data=JSON.parse(r.result);data.forEach((x,i)=>{if(games[i])games[i].result=x.result||x.outcome||'';});renderResults();saveState();alert('نتایج بارگذاری شد.');}catch(e){alert('فایل نتایج باید JSON و شامل result با مقدار 1 یا X یا 2 باشد.');}};r.readAsText(f,'UTF-8');}
+function evaluateForms(){let done=games.filter(g=>g.enabled&&g.result).length,ag=activeGames();if(!done)return alert('هنوز نتیجه‌ای ثبت نشده است.');$('evaluation').innerHTML=forms.map((f,i)=>{let hit=0,wrong=0;ag.forEach(g=>{let p=f.picks[g.index]||[];if(g.result){if(p.includes(g.result))hit++;else wrong++;}});return `<div class="game">فرم ${i+1}: <b class="${wrong?'bad':'good'}">${hit} صحیح، ${wrong} غلط</b> <small>از ${done} نتیجه ثبت‌شده</small></div>`}).join('');}
+function saveState(){try{localStorage.setItem('neshaat90_state',JSON.stringify({games,forms,levels,activeLevel,gameCount:$('gameCount').value,prices:['minForm','maxForm','minTotal','maxTotal'].reduce((a,k)=>(a[k]=$(k).value,a),{})}));}catch(e){}}
+function loadState(){try{let x=JSON.parse(localStorage.getItem('neshaat90_state')||'null');if(!x)return;games=x.games||games;forms=x.forms||[];levels=x.levels||levels;activeLevel=x.activeLevel||0;$('gameCount').value=x.gameCount||games.length;['minForm','maxForm','minTotal','maxTotal'].forEach(k=>{if(x.prices&&x.prices[k]!==undefined)$(k).value=x.prices[k];});}catch(e){}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function download(name,data,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);}
+function parseRows(t){if(t.trim().startsWith('['))return JSON.parse(t);return t.trim().split(/\r?\n/).slice(1).map(l=>{let [home,away]=l.split(',');return{home,away};});}
+init();
+</script>
+</body></html>
