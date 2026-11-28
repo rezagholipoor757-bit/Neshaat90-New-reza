@@ -38,7 +38,29 @@ jobs:
       - name: Extract Android project
         run: unzip -q -o neshaat90-source.zip -d .
 
+      
       - name: Fix application ID
+        working-directory: Neshaat90_Android_Project
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          p = Path("app/build.gradle")
+          s = p.read_text()
+          s, count = re.subn(
+              r"applicationId\s+['\"][^'\"]+['\"]",
+              "applicationId 'ir.neshaat90.app.v3'",
+              s,
+              count=1
+          )
+          if count != 1:
+              raise SystemExit("ERROR: applicationId line not found")
+          p.write_text(s)
+          print("Updated applicationId successfully")
+          print([line for line in s.splitlines() if "applicationId" in line])
+          PY
+
         working-directory: Neshaat90_Android_Project
         run: |
           sed -i "s/applicationId 'ir.neshaat90.app'/applicationId 'ir.neshaat90.app.v3'/" app/build.gradle
