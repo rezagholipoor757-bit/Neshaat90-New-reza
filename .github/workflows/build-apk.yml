@@ -39,8 +39,10 @@ jobs:
         run: unzip -q -o neshaat90-source.zip -d .
 
       
+      
       - name: Fix application ID
         working-directory: Neshaat90_Android_Project
+        shell: bash
         run: |
           python3 - <<'PY'
           import re
@@ -60,10 +62,6 @@ jobs:
           print("Updated applicationId successfully")
           print([line for line in s.splitlines() if "applicationId" in line])
           PY
-
-        working-directory: Neshaat90_Android_Project
-        run: |
-          sed -i "s/applicationId 'ir.neshaat90.app'/applicationId 'ir.neshaat90.app.v3'/" app/build.gradle
 
       - name: Verify source application ID
         working-directory: Neshaat90_Android_Project
