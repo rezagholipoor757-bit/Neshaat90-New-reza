@@ -1,5 +1,5 @@
 
-name: Neshaat90 - Side-by-side Android APK
+name: Neshaat90 - Side-by-side Android APK v4
 
 on:
   workflow_dispatch:
@@ -29,49 +29,45 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Restore stable Android debug signing key
+      - name: Restore v4 debug signing key
         uses: actions/cache@v4
         with:
           path: ~/.android/debug.keystore
-          key: neshaat90-v3-debug-signing-key-v1
+          key: neshaat90-v4-debug-signing-key-v1
 
       - name: Extract Android project
         run: unzip -q -o neshaat90-source.zip -d .
 
-      
-      
-      - name: Fix application ID
+      - name: Set application ID v4
         working-directory: Neshaat90_Android_Project
         shell: bash
         run: |
           python3 - <<'PY'
           import re
           from pathlib import Path
-
           p = Path("app/build.gradle")
           s = p.read_text()
           s, count = re.subn(
               r"applicationId\s+['\"][^'\"]+['\"]",
-              "applicationId 'ir.neshaat90.app.v3'",
+              "applicationId 'ir.neshaat90.app.v4'",
               s,
               count=1
           )
           if count != 1:
-              raise SystemExit("ERROR: applicationId line not found")
+              raise SystemExit("ERROR: applicationId not found")
           p.write_text(s)
-          print("Updated applicationId successfully")
-          print([line for line in s.splitlines() if "applicationId" in line])
+          print("Application ID set to v4")
           PY
 
-      - name: Verify source application ID
+      - name: Verify application ID
         working-directory: Neshaat90_Android_Project
-        run: grep -F "applicationId 'ir.neshaat90.app.v3'" app/build.gradle
+        run: grep -F "applicationId 'ir.neshaat90.app.v4'" app/build.gradle
 
-      - name: Clean and build APK
+      - name: Build APK
         working-directory: Neshaat90_Android_Project
         run: gradle --no-daemon clean assembleDebug
 
-      - name: Verify built APK package ID
+      - name: Verify and prepare APK
         working-directory: Neshaat90_Android_Project
         shell: bash
         run: |
@@ -81,14 +77,14 @@ jobs:
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -n 1)"
           test -n "$AAPT"
           "$AAPT" dump badging "$APK" | tee /tmp/apk-badging.txt
-          grep -F "package: name='ir.neshaat90.app.v3'" /tmp/apk-badging.txt
+          grep -F "package: name='ir.neshaat90.app.v4'" /tmp/apk-badging.txt
           mkdir -p ../verified-output
-          cp "$APK" ../verified-output/Neshaat90-v3.apk
+          cp "$APK" ../verified-output/Neshaat90-v4.apk
 
-      - name: Upload verified APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Neshaat90-v3-APK-${{ github.run_id }}-${{ github.run_attempt }}
-          path: verified-output/Neshaat90-v3.apk
+          name: Neshaat90-v4-APK-${{ github.run_id }}-${{ github.run_attempt }}
+          path: verified-output/Neshaat90-v4.apk
           if-no-files-found: error
           retention-days: 7
