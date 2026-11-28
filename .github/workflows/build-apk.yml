@@ -1,5 +1,5 @@
 
-name: Neshaat90 - Side-by-side Android APK  v5
+name: Neshaat90 - Side-by-side Android APK v5
 
 on:
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Restore v4 debug signing key
+      - name: Restore v5 debug signing key
         uses: actions/cache@v4
         with:
           path: ~/.android/debug.keystore
@@ -38,7 +38,7 @@ jobs:
       - name: Extract Android project
         run: unzip -q -o neshaat90-source.zip -d .
 
-      - name: Set application ID v4
+      - name: Set application ID v5
         working-directory: Neshaat90_Android_Project
         shell: bash
         run: |
@@ -56,12 +56,12 @@ jobs:
           if count != 1:
               raise SystemExit("ERROR: applicationId not found")
           p.write_text(s)
-          print("Application ID set to v4")
+          print("Application ID set to v5")
           PY
 
       - name: Verify application ID
         working-directory: Neshaat90_Android_Project
-        run: grep -F "applicationId 'ir.neshaat90.app.v4'" app/build.gradle
+        run: grep -F "applicationId 'ir.neshaat90.app.v5'" app/build.gradle
 
       - name: Build APK
         working-directory: Neshaat90_Android_Project
@@ -77,14 +77,14 @@ jobs:
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -n 1)"
           test -n "$AAPT"
           "$AAPT" dump badging "$APK" | tee /tmp/apk-badging.txt
-          grep -F "package: name='ir.neshaat90.app.v4'" /tmp/apk-badging.txt
+          grep -F "package: name='ir.neshaat90.app.v5'" /tmp/apk-badging.txt
           mkdir -p ../verified-output
-          cp "$APK" ../verified-output/Neshaat90-v4.apk
+          cp "$APK" ../verified-output/Neshaat90-v5.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Neshaat90-v4-APK-${{ github.run_id }}-${{ github.run_attempt }}
-          path: verified-output/Neshaat90-Neshaat90-v5shaat90-v4.apk
+          name: Neshaat90-v5-APK-${{ github.run_id }}-${{ github.run_attempt }}
+          path: verified-output/Neshaat90-v5.apk
           if-no-files-found: error
           retention-days: 7
