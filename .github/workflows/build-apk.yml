@@ -1,5 +1,5 @@
 
-name: Neshaat90 - Side-by-side Android APK v4
+name: Neshaat90 - Side-by-side Android APK  v5
 
 on:
   workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.android/debug.keystore
-          key: neshaat90-v4-debug-signing-key-v1
+          key: neshaat90-v5-debug-signing-key-v1
 
       - name: Extract Android project
         run: unzip -q -o neshaat90-source.zip -d .
@@ -49,7 +49,7 @@ jobs:
           s = p.read_text()
           s, count = re.subn(
               r"applicationId\s+['\"][^'\"]+['\"]",
-              "applicationId 'ir.neshaat90.app.v4'",
+              "applicationId 'ir.neshaat90.app.v5'",
               s,
               count=1
           )
@@ -85,6 +85,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Neshaat90-v4-APK-${{ github.run_id }}-${{ github.run_attempt }}
-          path: verified-output/Neshaat90-v4.apk
+          path: verified-output/Neshaat90-Neshaat90-v5shaat90-v4.apk
           if-no-files-found: error
           retention-days: 7
