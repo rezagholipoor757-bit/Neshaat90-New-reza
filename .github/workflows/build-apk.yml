@@ -36,8 +36,9 @@ jobs:
           key: neshaat90-v3-debug-signing-key-v1
 
       - name: Extract Android project
-        run: unzip -q -o neshaat90-source.zip -d .    
-        - name: Fix application ID
+        run: unzip -q -o neshaat90-source.zip -d .
+
+      - name: Fix application ID
         working-directory: Neshaat90_Android_Project
         run: |
           sed -i "s/applicationId 'ir.neshaat90.app'/applicationId 'ir.neshaat90.app.v3'/" app/build.gradle
