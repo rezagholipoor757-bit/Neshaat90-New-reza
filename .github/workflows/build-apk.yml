@@ -64,6 +64,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Neshaat90-v3-APK-${{ github.run_id }}-${{ github.run_attempt }}
-          path: Neshaat90_Android_Project/verified-output/Neshaat90-v3.apk
+          path: verified-output/Neshaat90-v3.apk
           if-no-files-found: error
           retention-days: 7
